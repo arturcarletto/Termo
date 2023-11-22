@@ -23,9 +23,14 @@ public class Game {
         StringBuilder finalLine = new StringBuilder();
         for (int i = 0; i < tries; i++) {
             List<String> line = new ArrayList<>();
-            for (TermoWord termoWord : termoWords) {
-                String guessedWord = guessedWords.size() <= i ? " _  _  _  _  _ " : termoWord.checkGuessWord(guessedWords.get(i));
-                line.add(guessedWord);
+            if(guessedWords.size() > i * termoWords.size()){
+                for(int j = 0; j < termoWords.size();j++){
+                    line.add(guessedWords.get(j + (i * termoWords.size())));
+                }
+            }else{
+                for(int j = 0; j < termoWords.size();j++){
+                    line.add(" _  _  _  _  _ ");
+                }
             }
             finalLine.append(String.join(" | ", line)).append("\n");
         }
@@ -33,14 +38,16 @@ public class Game {
     }
 
     public boolean isGameCompleted() {
-        return hasWon() || guessedWords.size() >= tries;
+        return hasWon() || (guessedWords.size() / termoWords.size()) >= tries;
     }
 
     public boolean hasWon() {
         return termoWords.stream().allMatch(TermoWord::isCompleted);
     }
 
-    public void addGuessedWord(String guessedWord) {
-        guessedWords.add(guessedWord);
+    public void addGuessedWord(String guessedWord){
+        for(TermoWord termoWord: termoWords){
+            guessedWords.add(termoWord.checkGuessWord(guessedWord.toUpperCase()));
+        }
     }
 }
