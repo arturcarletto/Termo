@@ -3,33 +3,49 @@ package com.termo;
 import java.util.Scanner;
 
 public class Console {
-    private Game game;
     private final Scanner scanner = new Scanner(System.in);
 
     public void startGame() {
-        while (game == null) {
+        while (true) {
             System.out.println("Quantas palavras você vai querer advinhar ao mesmo tempo?");
             try {
-                game = new Game(Integer.parseInt(scanner.nextLine()));
+                int numberOfWords = Integer.parseInt(scanner.nextLine());
+                runGame(new Game(numberOfWords));
             } catch (NumberFormatException nfe) {
                 System.out.println("Resposta inválida");
             }
         }
     }
 
-    public void runGame() {
+    private void runGame(Game game) {
         while (!game.isGameCompleted()) {
             System.out.println(game.printGuesses());
-            String answer = scanner.nextLine();
+            String answer = scanner.nextLine().trim();
 
-            if (answer.length() != 5 || answer.chars().anyMatch(Character::isDigit)) {
+            if (!isValidAnswer(answer)) {
                 System.out.println("Resposta inválida");
                 continue;
             }
-            game.addGuessedWord(answer);
+
+            if (game.addGuessedWord(answer)) {
+                System.out.println("Palavra adicionada");
+            } else {
+                System.out.println("Palavra inválida, ela não está no dicionário");
+            }
         }
-        System.out.println(game.printGuesses());
-        System.out.println(game.hasWon() ? "Você Venceu" : "Perdeu mané, não amola");
+        displayGameOutcome(game);
     }
 
+    private boolean isValidAnswer(String answer) {
+        return answer.length() == 5 && answer.chars().noneMatch(Character::isDigit);
+    }
+
+    private void displayGameOutcome(Game game) {
+        System.out.println(game.printGuesses());
+        if (game.hasWon()) {
+            System.out.println("Você venceu!");
+        } else {
+            System.out.println("Você perdeu. Tente novamente!");
+        }
+    }
 }

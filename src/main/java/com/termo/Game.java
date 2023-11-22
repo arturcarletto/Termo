@@ -2,53 +2,65 @@ package com.termo;
 
 import com.termo.word.TermoWord;
 import com.termo.word.provider.ImeUspProvider;
+import com.termo.word.provider.TermoProvider;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Game {
+
     private final int tries;
-    private final List<TermoWord> termoWords = new ArrayList<>();
+
+    private final TermoProvider wordProvider = new ImeUspProvider();
+
+    private final TermoWord[] termoWords;
+
     private final List<String> guessedWords = new ArrayList<>();
 
     public Game(int wordCount) {
-        ImeUspProvider imeUspProvider = new ImeUspProvider();
         tries = 4 + wordCount;
+        termoWords = new TermoWord[wordCount];
         for (int i = 0; i < wordCount; i++) {
-            termoWords.add(new TermoWord(imeUspProvider.provideRandomMessage()));
+            termoWords[i] = new TermoWord(wordProvider.provideRandomMessage());
         }
     }
 
     public String printGuesses() {
-        StringBuilder finalLine = new StringBuilder();
-        for (int i = 0; i < tries; i++) {
-            List<String> line = new ArrayList<>();
-            if(guessedWords.size() > i * termoWords.size()){
-                for(int j = 0; j < termoWords.size();j++){
-                    line.add(guessedWords.get(j + (i * termoWords.size())));
-                }
-            }else{
-                for(int j = 0; j < termoWords.size();j++){
-                    line.add(" _  _  _  _  _ ");
-                }
-            }
-            finalLine.append(String.join(" | ", line)).append("\n");
-        }
-        return finalLine.toString();
+        return IntStream.range(0, tries)
+                .mapToObj(this::createLine)
+                .collect(Collectors.joining("\n"));
+    }
+
+    private String createLine(int lineIndex) {
+        return IntStream.range(0, termoWords.length)
+                .mapToObj(i -> getGuessOrPlaceholder(i, lineIndex))
+                .collect(Collectors.joining(" | "));
+    }
+
+    private String getGuessOrPlaceholder(int wordIndex, int lineIndex) {
+        int guessIndex = wordIndex + (lineIndex * termoWords.length);
+        return guessIndex < guessedWords.size() ? guessedWords.get(guessIndex) : " _  _  _  _  _ ";
     }
 
     public boolean isGameCompleted() {
-        return hasWon() || (guessedWords.size() / termoWords.size()) >= tries;
+        return hasWon() || (guessedWords.size() / termoWords.length) >= tries;
     }
 
     public boolean hasWon() {
-        return termoWords.stream().allMatch(TermoWord::isCompleted);
+        return Arrays.stream(termoWords).allMatch(TermoWord::isCompleted);
     }
 
-    public void addGuessedWord(String guessedWord){
-        for(TermoWord termoWord: termoWords){
-            guessedWords.add(termoWord.checkGuessWord(guessedWord.toUpperCase()));
+    public boolean addGuessedWord(String guessedWord) {
+        if (!wordProvider.isAValidWord(guessedWord)) {
+            return false;
         }
+        Arrays.stream(termoWords).forEach(termoWord ->
+                guessedWords.add(termoWord.checkGuessWord(guessedWord.toUpperCase(Locale.ROOT)))
+        );
+        return true;
     }
-
 }

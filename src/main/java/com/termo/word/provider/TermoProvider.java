@@ -11,5 +11,10 @@ public interface TermoProvider {
         return words.get(RANDOM.nextInt(words.size()));
     }
 
+    default boolean isAValidWord(String word) {
+        return getValidWords().contains(word);
+    }
+
     List<String> getValidWords();
+
 }

@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.termo"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -12,11 +12,16 @@ repositories {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    implementation("net.kyori:adventure-text-minimessage:4.14.0")
-    implementation("net.kyori:adventure-text-serializer-ansi:4.14.0")
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(16))
+}
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
 }
