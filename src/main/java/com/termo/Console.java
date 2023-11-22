@@ -31,4 +31,5 @@ public class Console {
         System.out.println(game.printGuesses());
         System.out.println(game.hasWon() ? "Você Venceu" : "Perdeu mané, não amola");
     }
+
 }

@@ -11,7 +11,6 @@ import java.util.List;
 public class ImeUspProvider implements TermoProvider {
     private static final String WORDS_UTF8 = "https://www.ime.usp.br/~pf/dicios/br-utf8.txt";
     private final List<String> validWords = new ArrayList<>();
-
     @Override
     public List<String> getValidWords() {
         if (validWords.isEmpty()) {

@@ -50,4 +50,5 @@ public class Game {
             guessedWords.add(termoWord.checkGuessWord(guessedWord.toUpperCase()));
         }
     }
+
 }

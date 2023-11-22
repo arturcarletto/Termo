@@ -40,7 +40,6 @@ public class TermoWord {
         }
         return output.toString();
     }
-
     public boolean isCompleted() {
         return isCompleted;
     }
