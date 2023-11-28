@@ -1,9 +1,10 @@
-package com.termo;
+package com.termo.game;
 
 import com.termo.word.TermoWord;
 import com.termo.word.provider.ImeUspProvider;
 import com.termo.word.provider.TermoProvider;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +48,7 @@ public class Game {
     }
 
     public boolean isGameCompleted() {
-        return hasWon() || (guessedWords.size() / termoWords.length) >= tries;
+        return hasWon() || getCurrentTries() >= tries;
     }
 
     public boolean hasWon() {
@@ -63,4 +64,13 @@ public class Game {
         );
         return true;
     }
+
+    private int getCurrentTries() {
+        return guessedWords.size() / termoWords.length;
+    }
+
+    public GameStatistics dumpStatistics() {
+        return new GameStatistics(termoWords.length, getCurrentTries(), hasWon(), LocalDateTime.now());
+    }
+
 }

@@ -2,6 +2,7 @@ package com.termo.word.provider;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Locale;
 
 public interface TermoProvider {
     SecureRandom RANDOM = new SecureRandom();
@@ -12,7 +13,7 @@ public interface TermoProvider {
     }
 
     default boolean isAValidWord(String word) {
-        return getValidWords().contains(word);
+        return getValidWords().contains(word.toUpperCase(Locale.ROOT));
     }
 
     List<String> getValidWords();

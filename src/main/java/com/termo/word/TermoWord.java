@@ -11,6 +11,7 @@ public class TermoWord {
     private boolean isCompleted = false;
 
     public TermoWord(String word) {
+        System.out.println(word);
         this.word = word;
     }
 
